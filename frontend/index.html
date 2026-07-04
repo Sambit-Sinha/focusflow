@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FocusFlow — ADHD Task Manager</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     LOGIN SCREEN
+════════════════════════════════════════════════ -->
+<div id="screen-login">
+  <div class="login-card">
+    <div class="login-logo"><span class="logo-dot"></span>FocusFlow</div>
+    <p class="login-sub">A task manager built for ADHD brains.<br>No password. Just your name.</p>
+    <input type="text" id="login-name" placeholder="Enter your name to begin..." maxlength="100" autocomplete="off">
+    <button class="btn btn-primary" id="btn-login">Enter FocusFlow →</button>
+    <div class="login-error" id="login-error"></div>
+    <p class="login-note">Your tasks are saved to your name. Add auth later.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     APP SCREEN
+════════════════════════════════════════════════ -->
+<div id="screen-app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo"><span class="logo-dot"></span>FocusFlow</div>
+    <div class="header-right">
+      <div class="user-badge">👤 <span id="user-name-label"></span></div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" data-tab="tasks"><span class="tab-icon">◈</span>Tasks</button>
+    <button class="tab" data-tab="calendar"><span class="tab-icon">⊟</span>Calendar</button>
+    <button class="tab" data-tab="explore"><span class="tab-icon">✦</span>Explore</button>
+  </div>
+
+  <div class="main">
+
+    <!-- ─── TASKS PANEL ─────────────────────── -->
+    <div class="panel active" id="panel-tasks">
+
+      <!-- Progress -->
+      <div class="progress-section">
+        <div class="progress-label">
+          <span id="prog-label">0 of 0 tasks done</span>
+          <span id="prog-pct">0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Add task -->
+      <div class="task-add">
+        <input type="text" id="task-input" placeholder="Add a new task... (press Enter)" autocomplete="off">
+        <select id="task-cat">
+          <option value="work">💼 Work</option>
+          <option value="personal">🏠 Personal</option>
+          <option value="health">💚 Health</option>
+          <option value="study">📚 Study</option>
+          <option value="misc">📌 Misc</option>
+        </select>
+        <select id="task-type">
+          <option value="one-time">✓ One-time</option>
+          <option value="repetitive">🔁 Repetitive</option>
+        </select>
+        <button class="btn btn-primary" id="btn-add-task">Add</button>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="active">Active</button>
+        <button class="filter-btn" data-filter="done">Done</button>
+        <button class="filter-btn" data-filter="stale">⚡ Stale</button>
+        <button class="filter-btn" data-filter="work">Work</button>
+        <button class="filter-btn" data-filter="personal">Personal</button>
+        <button class="filter-btn" data-filter="health">Health</button>
+        <button class="filter-btn" data-filter="study">Study</button>
+      </div>
+
+      <!-- Task list -->
+      <div class="task-list" id="task-list">
+        <div class="empty"><div class="empty-icon">🎯</div><p>Loading your tasks...</p></div>
+      </div>
+
+    </div><!-- /tasks panel -->
+
+    <!-- ─── CALENDAR PANEL ────────────────────── -->
+    <div class="panel" id="panel-calendar">
+
+      <!-- Streak stats -->
+      <div class="cal-streak">
+        <div class="streak-card">
+          <div class="streak-num" id="streak-num">0</div>
+          <div class="streak-label">day streak 🔥</div>
+        </div>
+        <div class="streak-card">
+          <div class="streak-num" id="today-done">0</div>
+          <div class="streak-label">done today ✓</div>
+        </div>
+        <div class="streak-card">
+          <div class="streak-num" id="month-done">0</div>
+          <div class="streak-label">this month 📅</div>
+        </div>
+      </div>
+
+      <!-- Month nav -->
+      <div class="cal-header">
+        <div class="cal-nav">
+          <button id="btn-prev-month">‹</button>
+          <div class="cal-month" id="cal-month-label">June 2025</div>
+          <button id="btn-next-month">›</button>
+        </div>
+        <button class="btn btn-ghost" id="btn-today" style="font-size:12px;padding:7px 14px">Today</button>
+      </div>
+
+      <!-- Calendar grid -->
+      <div class="cal-grid" id="cal-grid"></div>
+
+    </div><!-- /calendar panel -->
+
+    <!-- ─── EXPLORE PANEL ──────────────────────── -->
+    <div class="panel" id="panel-explore">
+
+      <div class="explore-header">
+        <div class="explore-title">Your ADHD Coach ✦</div>
+        <div class="explore-sub">Get personalised strategies, focus techniques, and tool recommendations. Powered by Llama 3.3 70B (free via Groq).</div>
+      </div>
+
+      <!-- Quick prompts -->
+      <div class="explore-grid">
+        <div class="quick-pill" data-prompt="Give me ADHD-friendly tips for prioritising my tasks today">🎯 Prioritise my tasks</div>
+        <div class="quick-pill" data-prompt="What focus techniques work best for ADHD? Give me 3 I can try right now">⚡ Focus techniques</div>
+        <div class="quick-pill" data-prompt="Recommend apps and tools that help with ADHD productivity">🛠 Tool recommendations</div>
+        <div class="quick-pill" data-prompt="How can I build better daily routines with ADHD without burning out?">🔁 Build routines</div>
+      </div>
+
+      <!-- Chat -->
+      <div class="chat-area">
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-msg ai fade-in">
+            <div class="chat-avatar ai">FF</div>
+            <div class="chat-bubble">
+              Hey! I'm your FocusFlow AI coach. I can see your task patterns and help you work with your ADHD brain, not against it.<br><br>
+              Try a quick prompt above, or ask me anything — task breakdowns, focus strategies, habit hacks, or tool recommendations. 🧠
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="explore-input" placeholder="Ask your ADHD coach..." autocomplete="off">
+          <button class="btn btn-primary" id="btn-send-explore">Send</button>
+        </div>
+      </div>
+
+      <!-- Rec cards (shown dynamically) -->
+      <div class="recs-section" id="recs-section" style="display:none">
+        <div class="recs-title">Recommended for you</div>
+        <div class="rec-cards" id="rec-cards"></div>
+      </div>
+
+    </div><!-- /explore panel -->
+
+  </div><!-- /main -->
+</div><!-- /screen-app -->
+
+<!-- Day modal -->
+<div class="cal-modal" id="cal-modal">
+  <div class="cal-modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-date-title">Tasks</div>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div class="modal-tasks" id="modal-tasks"></div>
+    <div style="margin-top:14px;font-size:12px;color:var(--text3)">Click a task to toggle completion for this day.</div>
+  </div>
+</div>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

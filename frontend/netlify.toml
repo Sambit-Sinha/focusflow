@@ -1,0 +1,10 @@
+# Netlify config for FocusFlow frontend
+# Place this file at focusflow/frontend/netlify.toml
+
+[build]
+  publish = "."        # Deploy the frontend/ folder as-is (static files)
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
