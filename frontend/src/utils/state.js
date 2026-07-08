@@ -68,14 +68,27 @@ function isCompletedOnDate(task, dateStr) {
   return progressOnDate(task, dateStr) >= 100;
 }
 
-// Streak: consecutive days (going back from today) where ANY task had ANY progress > 0.
-// This counts both repetitive completions and any partial one-time progress.
+// True if a task made progress on dateStr vs its most recent prior recording.
+// Repetitive: any completion = progress. One-time: % must have gone UP vs prior day.
+function progressImprovedOnDate(task, dateStr) {
+  if (task.task_type === "repetitive") return isCompletedOnDate(task, dateStr);
+  const onDate = progressOnDate(task, dateStr);
+  if (onDate === 0) return false;
+  const prior = (task.completions ?? [])
+    .filter((c) => c.date < dateStr)
+    .sort((a, b) => b.date.localeCompare(a.date));
+  const priorPct = prior.length > 0 ? parseInt(prior[0].progress ?? "0", 10) : 0;
+  return onDate > priorPct;
+}
+
+// Streak: consecutive days (going back from today) where ANY task made progress.
+// One-time tasks only count if their % improved vs the prior recording.
 function streakDays(tasks) {
   let streak = 0;
   const d = new Date();
   while (streak < 366) {
     const ds = d.toISOString().slice(0, 10);
-    const anyProgress = tasks.some((t) => progressOnDate(t, ds) > 0);
+    const anyProgress = tasks.some((t) => progressImprovedOnDate(t, ds));
     if (!anyProgress) break;
     streak++;
     d.setDate(d.getDate() - 1);
@@ -108,6 +121,6 @@ function buildTaskSummary() {
 export {
   getState, setState, subscribe,
   isStale, todayStr,
-  progressOnDate, isCompletedOnDate, streakDays,
+  progressOnDate, isCompletedOnDate, progressImprovedOnDate, streakDays,
   getFilteredTasks, buildTaskSummary,
 };

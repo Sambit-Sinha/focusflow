@@ -27,6 +27,8 @@ def serialize_task(task, completions=None):
         task_type=task.task_type,
         completed=task.completed,
         created_at=str(task.created_at),
+        from_date=task.from_date,
+        to_date=task.to_date,
         completions=[{"date": c.date, "progress": c.progress or "100"} for c in completions],
     )
 
@@ -57,6 +59,8 @@ def create_task(user_id: str, payload: TaskCreate, db: Session = Depends(get_db)
         task_type=payload.task_type,
         completed=False,
         created_at=payload.created_at,
+        from_date=payload.from_date,
+        to_date=payload.to_date,
     )
     db.add(task)
     db.commit()
@@ -70,10 +74,13 @@ def update_task(user_id: str, task_id: str, payload: TaskUpdate, db: Session = D
     task = db.query(Task).filter(Task.id == task_id, Task.user_id == user_id).first()
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
-    if payload.name is not None:      task.name      = payload.name.strip()
-    if payload.category is not None:  task.category  = payload.category
-    if payload.task_type is not None: task.task_type = payload.task_type
-    if payload.completed is not None: task.completed = payload.completed
+    sent = payload.model_fields_set
+    if "name"      in sent: task.name      = payload.name.strip()
+    if "category"  in sent: task.category  = payload.category
+    if "task_type" in sent: task.task_type = payload.task_type
+    if "completed" in sent: task.completed = payload.completed
+    if "from_date" in sent: task.from_date = payload.from_date  # None clears the field
+    if "to_date"   in sent: task.to_date   = payload.to_date
     db.commit()
     db.refresh(task)
     completions = db.query(Completion).filter(Completion.task_id == task.id).all()

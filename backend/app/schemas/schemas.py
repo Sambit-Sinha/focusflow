@@ -21,6 +21,8 @@ class TaskCreate(BaseModel):
     category: str = "misc"
     task_type: str = "one-time"
     created_at: str
+    from_date: Optional[str] = None
+    to_date: Optional[str] = None
 
 
 class TaskUpdate(BaseModel):
@@ -28,6 +30,8 @@ class TaskUpdate(BaseModel):
     category: Optional[str] = None
     task_type: Optional[str] = None
     completed: Optional[bool] = None
+    from_date: Optional[str] = None
+    to_date: Optional[str] = None
 
 
 class CompletionOut(BaseModel):
@@ -43,6 +47,8 @@ class TaskOut(BaseModel):
     task_type: str
     completed: bool
     created_at: str
+    from_date: Optional[str] = None
+    to_date: Optional[str] = None
     completions: List[CompletionOut] = []
     model_config = {"from_attributes": True}
 

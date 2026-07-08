@@ -26,11 +26,14 @@ const api = {
     return res.json();
   },
 
-  async createTask(userId, name, category, taskType, createdAt) {
+  async createTask(userId, name, category, taskType, createdAt, fromDate, toDate) {
+    const body = { name, category, task_type: taskType, created_at: createdAt };
+    if (fromDate) body.from_date = fromDate;
+    if (toDate)   body.to_date   = toDate;
     const res = await fetch(`${BASE_URL}/tasks/${userId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, category, task_type: taskType, created_at: createdAt }),
+      body: JSON.stringify(body),
     });
     if (!res.ok) throw new Error(await res.text());
     return res.json();

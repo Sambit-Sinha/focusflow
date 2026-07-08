@@ -3,6 +3,7 @@ import { setState } from "./utils/state.js";
 import { initTasks, renderTasks } from "./components/tasks.js";
 import { initCalendar, renderCal } from "./components/calendar.js";
 import { initExplore } from "./components/explore.js";
+import { initRecommendations, onRecommendationsEnter } from "./components/recommendations.js";
 
 // ——— TAB SWITCHING ———
 function initTabs() {
@@ -13,6 +14,7 @@ function initTabs() {
       document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
       tab.classList.add("active");
       document.getElementById(`panel-${name}`).classList.add("active");
+      if (name === "recommendations") onRecommendationsEnter();
     });
   });
 }
@@ -66,4 +68,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initTasks();
   initCalendar();
   initExplore();
+  initRecommendations();
 });

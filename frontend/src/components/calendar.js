@@ -1,5 +1,5 @@
 import api from "../utils/api.js";
-import { getState, setState, subscribe, isCompletedOnDate, progressOnDate, streakDays, todayStr } from "../utils/state.js";
+import { getState, setState, subscribe, isCompletedOnDate, progressOnDate, progressImprovedOnDate, streakDays, todayStr } from "../utils/state.js";
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const DAYS   = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -37,6 +37,19 @@ export function initCalendar() {
   document.getElementById("modal-close").addEventListener("click", closeDayModal);
 }
 
+// Should a one-time task appear in a given calendar cell?
+function isOneTimeVisibleOnDate(task, dateStr) {
+  const from = task.from_date || task.created_at;
+  const to   = task.to_date;
+  if (dateStr < from) return false;
+  if (to && dateStr > to) return false;
+  // hide once the task hit 100% on any earlier day
+  const completedBefore = (task.completions ?? []).some(
+    (c) => c.date < dateStr && parseInt(c.progress ?? "0", 10) >= 100
+  );
+  return !completedBefore;
+}
+
 export function renderCal() {
   const { calYear, calMonth, tasks } = getState();
   const calMonthLabel = document.getElementById("cal-month-label");
@@ -59,7 +72,11 @@ export function renderCal() {
   for (let day = 1; day <= daysInMonth; day++) {
     const dateStr = `${calYear}-${String(calMonth + 1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
     const isToday = todayD.getFullYear() === calYear && todayD.getMonth() === calMonth && todayD.getDate() === day;
-    const relevant = tasks.filter((t) => t.created_at <= dateStr);
+    const relevant = tasks.filter((t) =>
+      t.task_type === "repetitive"
+        ? t.created_at <= dateStr
+        : isOneTimeVisibleOnDate(t, dateStr)
+    );
     const shown    = relevant.slice(0, 3);
     const extra    = relevant.length - 3;
 
@@ -104,8 +121,8 @@ function renderStreaks() {
   const { tasks, calYear, calMonth } = getState();
   const todayS = todayStr();
 
-  // "Done today" = any task with any progress today
-  const todayDone = tasks.filter((t) => progressOnDate(t, todayS) > 0).length;
+  // "Done today" = tasks where progress actually improved today
+  const todayDone = tasks.filter((t) => progressImprovedOnDate(t, todayS)).length;
   document.getElementById("today-done").textContent = todayDone;
 
   // "This month" = total progress records (any %) in the viewed month
@@ -153,7 +170,11 @@ function renderDayModal(dateStr) {
   document.getElementById("modal-date-title").textContent =
     new Date(y, m - 1, d).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
 
-  const relevant = tasks.filter((t) => t.created_at <= dateStr);
+  const relevant = tasks.filter((t) =>
+    t.task_type === "repetitive"
+      ? t.created_at <= dateStr
+      : isOneTimeVisibleOnDate(t, dateStr)
+  );
   const box = document.getElementById("modal-tasks");
 
   if (!relevant.length) {

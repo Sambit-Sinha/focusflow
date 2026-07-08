@@ -30,6 +30,8 @@ class Task(Base):
     completed = Column(Boolean, default=False)
     task_type = Column(String(20), nullable=False, default="one-time")  # "one-time" | "repetitive"
     created_at = Column(Date, nullable=False)  # stored as YYYY-MM-DD
+    from_date = Column(String(10), nullable=True)   # one-time tasks: start of visible range
+    to_date   = Column(String(10), nullable=True)   # one-time tasks: end of visible range
 
     user = relationship("User", back_populates="tasks")
     completions = relationship("Completion", back_populates="task", cascade="all, delete-orphan")

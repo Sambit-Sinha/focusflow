@@ -48,6 +48,16 @@ function bindTaskInput() {
   });
   document.getElementById("btn-add-task").addEventListener("click", addTask);
 
+  // Show date range row only for one-time tasks
+  const typeSelect   = document.getElementById("task-type");
+  const dateRangeRow = document.getElementById("task-date-range");
+  function syncDateRow() {
+    dateRangeRow.style.display = typeSelect.value === "one-time" ? "flex" : "none";
+    // flex is correct — .task-dates-inline is a flex container
+  }
+  typeSelect.addEventListener("change", syncDateRow);
+  syncDateRow();
+
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       setState({ currentFilter: btn.dataset.filter });
@@ -66,12 +76,17 @@ async function addTask() {
   const { user } = getState();
   if (!user) return;
 
+  const fromDate = taskType === "one-time" ? (document.getElementById("task-from-date").value || null) : null;
+  const toDate   = taskType === "one-time" ? (document.getElementById("task-to-date").value   || null) : null;
+
   input.value    = "";
   input.disabled = true;
   try {
-    const task = await api.createTask(user.id, name, cat, taskType, todayStr());
+    const task = await api.createTask(user.id, name, cat, taskType, todayStr(), fromDate, toDate);
     const { tasks } = getState();
     setState({ tasks: [task, ...tasks] });
+    if (fromDate) document.getElementById("task-from-date").value = "";
+    if (toDate)   document.getElementById("task-to-date").value   = "";
   } catch (e) {
     console.error(e);
     alert("Could not save task. Is the backend running?");
@@ -111,10 +126,15 @@ export async function saveEdit(taskId) {
   const name = nameEl.value.trim();
   if (!name) { setState({ editingTaskId: null }); return; }
   const { user, tasks } = getState();
+
+  const updates = { name, category: catEl?.value, task_type: typeEl?.value };
+  const fromEl = document.getElementById(`edit-from-${taskId}`);
+  const toEl   = document.getElementById(`edit-to-${taskId}`);
+  if (fromEl) updates.from_date = fromEl.value || null;
+  if (toEl)   updates.to_date   = toEl.value   || null;
+
   try {
-    const updated = await api.updateTask(user.id, taskId, {
-      name, category: catEl?.value, task_type: typeEl?.value,
-    });
+    const updated = await api.updateTask(user.id, taskId, updates);
     setState({ tasks: tasks.map((t) => (t.id === taskId ? updated : t)), editingTaskId: null });
   } catch (e) {
     console.error(e);
@@ -144,6 +164,10 @@ function normalRow(t) {
     ? `<span class="tag tag-repetitive">🔁 Repetitive</span>`
     : `<span class="tag tag-onetime">✓ One-time</span>`;
 
+  const dateWindowHtml = !isRep && (t.from_date || t.to_date)
+    ? `<div class="task-date-window">📅 ${t.from_date || "?"} → ${t.to_date || "∞"}</div>`
+    : "";
+
   return `<tr class="task-row ${staleRowClass} ${t.completed ? "row-done" : ""}" data-id="${t.id}">
     <td class="col-cb">
       <div class="task-check ${t.completed ? "done" : ""}" data-action="toggle" data-id="${t.id}"></div>
@@ -151,6 +175,7 @@ function normalRow(t) {
     <td class="col-name">
       <span class="task-name">${escHtml(t.name)}</span>
       ${staleBadge(t)}
+      ${dateWindowHtml}
     </td>
     <td class="col-cat">
       <span class="tag ${CATS[t.category] || "tag-misc"}">${CAT_LABELS[t.category] || t.category}</span>
@@ -168,6 +193,11 @@ function normalRow(t) {
 }
 
 function editRow(t) {
+  const isOneTime = t.task_type === "one-time";
+  const datePickers = isOneTime ? `
+    <span class="edit-date-sep">|</span>
+    <label class="edit-date-field">From <input type="date" class="edit-date" id="edit-from-${t.id}" value="${t.from_date || ""}"></label>
+    <label class="edit-date-field">To <input type="date" class="edit-date" id="edit-to-${t.id}" value="${t.to_date || ""}"></label>` : "";
   return `<tr class="task-row task-row-editing" data-id="${t.id}">
     <td class="col-cb">
       <div class="task-check ${t.completed ? "done" : ""}" data-action="toggle" data-id="${t.id}"></div>
@@ -185,6 +215,7 @@ function editRow(t) {
         <div class="edit-controls">
           <select class="edit-select" id="edit-cat-${t.id}">${catOptions(t.category)}</select>
           <select class="edit-select" id="edit-type-${t.id}">${typeOptions(t.task_type)}</select>
+          ${datePickers}
           <button class="btn btn-primary btn-sm" data-action="save-edit"   data-id="${t.id}">Save</button>
           <button class="btn btn-ghost   btn-sm" data-action="cancel-edit" data-id="${t.id}">Cancel</button>
         </div>

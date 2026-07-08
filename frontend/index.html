@@ -39,7 +39,8 @@
   <div class="tabs">
     <button class="tab active" data-tab="tasks"><span class="tab-icon">◈</span>Tasks</button>
     <button class="tab" data-tab="calendar"><span class="tab-icon">⊟</span>Calendar</button>
-    <button class="tab" data-tab="explore"><span class="tab-icon">✦</span>Explore</button>
+    <button class="tab" data-tab="recommendations"><span class="tab-icon">◎</span>Music</button>
+    <button class="tab" data-tab="explore"><span class="tab-icon">✦</span>Coach</button>
   </div>
 
   <div class="main">
@@ -72,6 +73,10 @@
           <option value="one-time">✓ One-time</option>
           <option value="repetitive">🔁 Repetitive</option>
         </select>
+        <div id="task-date-range" class="task-dates-inline">
+          <input type="date" id="task-from-date" title="Start date">
+          <input type="date" id="task-to-date" title="End date">
+        </div>
         <button class="btn btn-primary" id="btn-add-task">Add</button>
       </div>
 
@@ -128,7 +133,10 @@
 
     </div><!-- /calendar panel -->
 
-    <!-- ─── EXPLORE PANEL ──────────────────────── -->
+    <!-- ─── RECOMMENDATIONS / MUSIC PANEL ───────── -->
+    <div class="panel" id="panel-recommendations"></div><!-- /recommendations panel -->
+
+    <!-- ─── EXPLORE / COACH PANEL ───────────────── -->
     <div class="panel" id="panel-explore">
 
       <div class="explore-header">
@@ -184,6 +192,7 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
 <script type="module" src="src/main.js"></script>
 </body>
 </html>
