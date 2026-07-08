@@ -340,3 +340,21 @@ focusflow/
 - [ ] **Chatbot actions** — classify query → add to favourites / add to knowledge graph
 - [ ] **Multi-user graph** — show connections between users with similar taste
 - [ ] **Auth layer** — replace name-only login
+
+---
+
+### Session 4 — App Rename: FocusFlow → Un Poco Loco
+
+Renamed the application across all user-facing files:
+
+| File | Change |
+|---|---|
+| `frontend/index.html` | Page title, login logo, login button, header logo, AI coach intro message |
+| `frontend/src/main.js` | Login error button text |
+| `backend/app/main.py` | FastAPI title, health endpoint response |
+| `backend/app/routes/music.py` | MusicBrainz User-Agent header |
+| `backend/app/services/ai_service.py` | AI coach system prompt |
+| `render.yaml` | Service name → `un-poco-loco-api` |
+| `frontend/netlify.toml` | Comment header |
+
+> Supabase connection string and local filesystem paths still reference `focusflow` — these are infrastructure/OS paths, not the app name, and are correct to leave unchanged.
