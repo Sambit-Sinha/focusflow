@@ -69,7 +69,7 @@ def run_migrations():
 
 
 app = FastAPI(
-    title="FocusFlow API",
+    title="Un Poco Loco API",
     description="ADHD Task Manager backend",
     version="1.0.0",
 )
@@ -96,4 +96,4 @@ run_migrations()
 
 @app.get("/")
 def health():
-    return {"status": "ok", "app": "FocusFlow API"}
+    return {"status": "ok", "app": "Un Poco Loco API"}

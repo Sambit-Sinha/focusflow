@@ -42,7 +42,7 @@ function initLogin() {
     } catch (e) {
       err.textContent = "Could not connect to server. Is the backend running?";
       btn.disabled = false;
-      btn.textContent = "Enter FocusFlow";
+      btn.textContent = "Enter Un Poco Loco";
     }
   };
 

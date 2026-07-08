@@ -11,7 +11,7 @@ router = APIRouter(prefix="/music", tags=["music"])
 
 MBZ_BASE   = "https://musicbrainz.org/ws/2"
 MBZ_HEADERS = {
-    "User-Agent": "FocusFlow/1.0 (soumik.pal@klinic.live)",
+    "User-Agent": "UnPocoLoco/1.0 (soumik.pal@klinic.live)",
     "Accept": "application/json",
 }
 
