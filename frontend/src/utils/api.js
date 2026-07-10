@@ -4,8 +4,8 @@
 // ============================================================
 
 // Development: http://localhost:8000
-// Production:  https://your-app-name.onrender.com
-const BASE_URL = "http://localhost:8000";
+// Production:  https://un-poco-loco-api.onrender.com
+const BASE_URL = "https://un-poco-loco-api.onrender.com";
 
 const api = {
   // ——— USERS ———
