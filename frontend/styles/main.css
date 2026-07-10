@@ -322,19 +322,20 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; }
   display: flex; align-items: center; justify-content: center; transition: all 0.15s;
 }
 .cal-nav button:hover { border-color: var(--accent); color: var(--accent); }
-.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
-.cal-day-label { text-align: center; font-size: 10px; font-weight: 700; color: var(--text3); padding: 8px 0; letter-spacing: 0.08em; text-transform: uppercase; }
+.cal-box { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border); }
+.cal-day-label { text-align: center; font-size: 10px; font-weight: 700; color: var(--text3); padding: 8px 0; letter-spacing: 0.08em; text-transform: uppercase; background: var(--bg2); }
 .cal-cell {
-  background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-xs);
-  min-height: 100px; padding: 8px; cursor: pointer; transition: all 0.15s;
+  background: var(--bg3);
+  min-height: 100px; padding: 8px; cursor: pointer; transition: background 0.15s;
   display: flex; flex-direction: column;
 }
-.cal-cell:hover { border-color: var(--border2); background: var(--bg4); }
-.cal-cell.today { border-color: var(--accent); background: var(--accent-bg); }
-.cal-cell.empty-cell { background: transparent; border-color: transparent; cursor: default; }
-.cal-cell.empty-cell:hover { background: transparent; border-color: transparent; }
+.cal-cell:hover { background: var(--bg4); }
+.cal-cell.today { background: var(--accent-bg); }
+.cal-cell.empty-cell { background: var(--bg2); cursor: default; }
+.cal-cell.empty-cell:hover { background: var(--bg2); }
 .cal-date-num { font-size: 12px; font-weight: 700; color: var(--text3); margin-bottom: 4px; }
-.cal-cell.today .cal-date-num { color: var(--accent); }
+.cal-cell.today .cal-date-num { color: var(--accent); font-weight: 800; }
 .cal-tasks-mini { display: flex; flex-direction: column; gap: 2px; flex: 1; overflow: hidden; }
 .cal-task-item { display: flex; align-items: center; gap: 4px; cursor: pointer; }
 .cal-task-cb {
